@@ -1,6 +1,18 @@
 /*Stylesheet by Megan Roessler, 2019*/
 
-#map{ height: 400px; }
-
-#h1{ color: pink;
+#map {
+    height: 400px;
+    width: 80%;
+    display: inline-block;
 }
+
+#panel {
+    width: 16%;
+    padding: 20px;
+    display: inline-block;
+    vertical-align: top;
+}
+ }
+ h1{ font-family: olifantnormal, sans-serif;
+	 text-align: center;
+ }
