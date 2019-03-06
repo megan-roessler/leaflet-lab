@@ -1,7 +1,7 @@
 /*Stylesheet by Megan Roessler, 2019*/
 
 #map {
-    height: 500px;
+    height: 400px;
     width: 80%;
 	display: inline-block;
 }
@@ -24,10 +24,6 @@
 	 line-height: 0.75;
 	 font-family: olifantnormal, sans-serif;
  }
- 
- .range-slider {
-	 width: 75%;
- }	
  
 #forward {
 	float: right;

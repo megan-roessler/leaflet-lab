@@ -19,7 +19,10 @@ function getData(map){
 	$.ajax("data/women-in-congress1.geojson", {
         dataType: "json",
         success: function(response){
-			 var geojsonMarkerOptions = {
+			//create attributes array
+			var attributes = processData(response);
+			
+			var geojsonMarkerOptions = {
                 radius: 8,
                 fillColor: "#ffffff",
                 color: "#000",
@@ -38,7 +41,7 @@ function getData(map){
 };
 
 
-//Create function to calculate prop symbol radius
+//Calculate prop symbol radius
 function calcPropRadius(attValue) {
 	var scaleFactor = 50;
 	var area = attValue * scaleFactor;
@@ -59,27 +62,40 @@ function getData(map){
     });
 };
 
-
-//create popup content
+//Create pop-up content
 function pointToLayer(feature, latlng){
 
 	var attribute = "116th_congress";
 	
-  /*   var geojsonMarkerOptions = {
+    var geojsonMarkerOptions = {
         radius: 8,
         fillColor: "#ffffff",
         color: "#000",
         weight: 1,
         opacity: 1,
         fillOpacity: 0.8
-	}; */
+	};
 	
-	var attValue = Number(feature.properties[attribute]);
-	options.radius = calcPropRadius(attValue);
+	var attValue = feature.properties[attribute];
+	geojsonMarkerOptions.radius = calcPropRadius(attValue);
+	console.log(feature.properties);
 	
-	var popupContent = "<p><b>State:</b>" + feature.properties.State + "</p>";
+	var layer = L.circleMarker(latlng, geojsonMarkerOptions);
 	
+	var popupContent = "<p><b>State: </b>" + feature.properties.State + "</p>";
+	console.log(popupContent)
+	var year = attribute.split("_")[1];
+	popupContent += "<p><b>Women in " + attribute + ": </b> " + feature.properties[attribute] + "</p>"
 	layer.bindPopup(popupContent);
+	    //event listeners to open popup on hover
+    layer.on({
+        mouseover: function(){
+            this.openPopup();
+        },
+        mouseout: function(){
+            this.closePopup();
+        }
+    });
 	
 	return layer;
 };
@@ -100,20 +116,42 @@ function createPropSymbols(data, map){
 
     //Create a Leaflet GeoJSON layer and add it to the map
     L.geoJson(data, {
-        pointToLayer: function (feature, latlng) {
-			var attValue = Number(feature.properties[attribute]);
-			console.log(feature.properties, attValue)
-			geojsonMarkerOptions.radius = calcPropRadius(attValue);
-            return L.circleMarker(latlng, geojsonMarkerOptions);
-        }
+        pointToLayer: pointToLayer
     }).addTo(map);
 };
 
-function onEachFeature(feature, layer) {
-	if (feature.properties && feature.properties.popupContent) {
-		layer.bindPopup(feature.properties.popupContent);
-	}
-}
+//Step 1: Create new sequence controls
+function createSequenceControls(map){
+    //create range input element (slider)
+    $('#panel').append('<input class="range-slider" type="range">');
+	//set range slider attributes
+	$('.range-slider').attr({
+		max: 6,
+		min: 0,
+		value: 0,
+		step: 1
+	});
+/* 	//add skip and reverse buttons
+	$('#panel').append('<button class="skip" id="reverse">Reverse</button>');
+    $('#panel').append('<button class="skip" id="forward">Skip</button>');
+	//replace button text with icons
+	$('#reverse').html('<img src="img/arrow-left.png">');
+    $('#forward').html('<img src="img/arrow-right.png">'); */
+};
+
+//Import GeoJSON data
+function getData(map){
+    //load the data
+    $.ajax("data/women-in-congress1.geojson", {
+        dataType: "json",
+        success: function(response){
+
+            createPropSymbols(response, map);
+            createSequenceControls(map);
+
+        }
+    });
+};
 
 //call function
 $(document).ready(createMap);
