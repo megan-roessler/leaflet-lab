@@ -29,6 +29,7 @@ function pointToLayer(feature, latlng, attributes){
 	//console.log(attributes);
 	var attribute = attributes[1];
 	
+	//Style GeoJSON markers
     var geojsonMarkerOptions = {
         radius: 8,
         fillColor: "#ffffff",
@@ -42,13 +43,13 @@ function pointToLayer(feature, latlng, attributes){
 	geojsonMarkerOptions.radius = calcPropRadius(attValue);
 	
 	var layer = L.circleMarker(latlng, geojsonMarkerOptions);
-	
+	//Style popup content
 	var popupContent = "<p><b>State: </b>" + feature.properties.State + "</p>";
 	
 	var year = attribute.split("_")[1];
 	popupContent += "<p><b>Women in " + attribute + ": </b> " + feature.properties[attribute] + "</p>"
 	layer.bindPopup(popupContent);
-	//event listeners to open popup on hover
+	//Open popup on mouseover
     layer.on({
         mouseover: function(){
             this.openPopup();
@@ -62,7 +63,7 @@ function pointToLayer(feature, latlng, attributes){
 };
 
 
-//Step 6. Create proportional symbols
+//Step 6. Implement proportional symbols
 function createPropSymbols(data, map, attributes){
 	
     L.geoJson(data, {
@@ -75,7 +76,7 @@ function createPropSymbols(data, map, attributes){
 
 //Step 7. Create sequence controls that update map based on user input
 function createSequenceControls(map, attributes){
-	
+	//Moves sequence control bar to lower left corner of map div
 	var sequenceControl = L.Control.extend({
 		options: {
 			position: 'bottomleft'
@@ -98,10 +99,10 @@ function createSequenceControls(map, attributes){
 		value: 0,
 		step: 1
 	});
-	
+	//Style ff/rw buttons
 	$('#reverse').html('<img src="img/rw.png">');
 	$('#forward').html('<img src="img/ff.png">');
-	
+	//Update slider and map based on user interaction with buttons
 	$('.skip').click(function(){
 		var index = $('.range-slider').val();
 		if($(this).attr('id') == 'forward'){
@@ -197,8 +198,8 @@ function createLegend(map, attributes, attribute, properties){
 				mean: 40,
 				min: 60
 			};
-			//["max", "mean", "min"];
 			
+			//Create dynamic legend
 			for(var circle in circles){
 				svg += '<circle class="legend-circle" id="' + circle + '"fill="#ffffff" fill-opacity="1.0" stroke="#A4123F" cx="30"/>';
 				svg += '<text id="' + circle + '-text" x="65" y="' + circles[circle] + '"></text>';
@@ -244,7 +245,7 @@ function getCircleValues(map, attribute){
 
 };
 
-//Step 11(b). Update legend using circle values
+//Step 11(b). Update legend with circle values
 function updateLegend(map, attribute){
 	var year = attribute.split("_")[1];
 	var content = "Women in the " + attribute;
@@ -267,15 +268,17 @@ function updateLegend(map, attribute){
 //Step 12. Create overlay function
 function createOverlay(map){
 	var firstWomen = new L.LayerGroup();
-	
+	//Define markers to overlay/popup content
 	L.marker([36.1162, -119.682])
 		.bindPopup('<b>Nancy Pelosi (D):</b> First female Speaker of the House.').addTo(firstWomen),
 	L.marker([33.04062, -83.6431])
 		.bindPopup('<b>Rebecca Latimer Felton (D):</b> First woman to serve in the Senate.').addTo(firstWomen),
 	L.marker([21.09432, -157.498])
 		.bindPopup('<b>Patsy Mink (D):</b> First Asian-American and first woman of color elected to Congress.').addTo(firstWomen),
+	L.marker([40.34946, -88.9861])
+		.bindPopup('<b>Carol Moseley Braun (D):</b> First woman of color elected to the Senate.').addTo(firstWomen),
 	L.marker([38.52664, -96.7265])
-		.bindPopup('<b>Sharice Davids (D):</b> One of the first two Native American women elected to Congress.').addTo(firstWomen),
+		.bindPopup('<b>Nancy Landon Kassebaum (R):</b> First woman elected to the Senate without first serving in Congress.<br><b>Sharice Davids (D):</b> One of the first two Native American women elected to Congress.').addTo(firstWomen),
 	L.marker([44.69395, -69.3819])
 		.bindPopup('<b>Margaret Chase Smith (R):</b> First woman to serve in both the House and the Senate.').addTo(firstWomen),
 	L.marker([43.32662, -84.5361])
