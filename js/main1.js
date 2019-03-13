@@ -14,47 +14,14 @@ function createMap(){
 	getData(map);
 };
 
-//REDUNDANT
-/* //Load geojson data to map
-function getData(map){
-	$.ajax("data/women-in-congress1.geojson", {
-        dataType: "json",
-        success: function(response){
-			//create attributes array
-			var attributes = processData(response);
-			
-			createPropSymbols(response, map, attributes);
-			createSequenceControls(map, attributes);
-			
-			var geojsonMarkerOptions = {
-                radius: 8,
-                fillColor: "#ffffff",
-                color: "#000",
-                weight: 1,
-                opacity: 1,
-                fillOpacity: 0.8
-            };
-            //add leaflet GeoJSON to map
-            L.geoJson(response, {
-				pointToLayer: function (feature, latlng){
-					return L.circleMarker(latlng, geojsonMarkerOptions);
-				}
-			}).addTo(map);
-        }
-    });
-}; */
-
-
 //Calculate prop symbol radius
 function calcPropRadius(attValue) {
 	var scaleFactor = 50;
 	var area = attValue * scaleFactor;
-	var radius = Math.sqrt(area/Math.PI);
+	var radius = Math.sqrt(area/Math.PI)*3;
 	
 	return radius;
 };
-
-
 
 //Popup content
 function pointToLayer(feature, latlng, attributes){
@@ -64,10 +31,10 @@ function pointToLayer(feature, latlng, attributes){
     var geojsonMarkerOptions = {
         radius: 8,
         fillColor: "#ffffff",
-        color: "#000",
-        weight: 1,
+        color: "#A4123F",
+        weight: 0.5,
         opacity: 1,
-        fillOpacity: 0.8
+        fillOpacity: 0.6
 	};
 	
 	var attValue = feature.properties[attribute];
@@ -117,8 +84,25 @@ function createPropSymbols(data, map, attributes){
 
 //Step 1: Create new sequence controls
 function createSequenceControls(map, attributes){
+	
+	
+	var sequenceControl = L.Control.extend({
+		options: {
+			position: 'bottomleft'
+		},
+		onAdd: function(map) {
+			var container = L.DomUtil.create('div', 'sequence-control-container');
+			$(container).append('<input class = "range-slider" type = "range">');
+			
+			L.DomEvent.disableClickPropagation(container);
+			return container;
+		}
+	});
+	
+	map.addControl(new sequenceControl());
+	
     //create range input element (slider)
-    $('#panel').append('<input class="range-slider" type="range">');
+    //$('#panel').append('<input class="range-slider" type="range">');
 	//set range slider attributes
 	$('.range-slider').attr({
 		max: 55,
@@ -127,20 +111,17 @@ function createSequenceControls(map, attributes){
 		step: 1
 	});
 		
-	$('.skip').click(function(){
-		//Sequence
-		//updatePropSymbols(map, attributes);
-	});
-	
 	//Update map based on range slider
 	$('.range-slider').on('input', function(){
 		var index = $(this).val();
 		$('.range-slider').val(index);
 		updatePropSymbols(map, attributes[index]);
 	});
+	
 };
 
 function updatePropSymbols(map, attribute){
+	
 	map.eachLayer(function(layer){
 		if (layer.feature && layer.feature.properties[attribute]){
 			var props = layer.feature.properties;
@@ -173,6 +154,7 @@ function processData(data){
 	
 	return attributes;
 };
+
 //Import GeoJSON data
 function getData(map){
     //load the data
@@ -185,9 +167,23 @@ function getData(map){
             //call function to create proportional symbols
 			createPropSymbols(response, map, attributes);
 			createSequenceControls(map, attributes);
+			createLegend(map, attributes);
         }
     });
 };
+
+function createPopup(properties, attribute, layer, radius){
+	var popupContent = "<p><b>State:</b> " + properties.State + "</p>";
+	
+	var year = attribute.split("_")[1];
+	popupContent += "<p><b>Women in " + attribute + ": </b> " + props[attribute] + "</p>";
+	
+	layer.bindPopup(popupContent, {
+		offset: new L.Point(0, -radius)
+	});
+};
+
+
 
 //call function
 $(document).ready(createMap);

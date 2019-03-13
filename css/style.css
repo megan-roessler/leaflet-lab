@@ -2,12 +2,13 @@
 
 #map {
     height: 500px;
-    width: 80%;
+    width: 100%;
 	display: inline-block;
+	float: center;
 }
 
 #panel {
-    width: 16%;
+    width: 0%;
     padding: 20px;
     display: inline-block;
     vertical-align: top;
@@ -17,6 +18,7 @@
  h1{ font-family: olifantnormal, sans-serif;
 	 text-align: center;
 	 color: #DF4661;
+	 font-style: italic;
  }
  
  .leaflet-popup-content p {
@@ -26,7 +28,7 @@
  }
  
  .range-slider {
-	 width: 75%;
+	 width: 60%;
  }	
  
 #forward {
@@ -35,4 +37,40 @@
 
 #reverse {
 	float: left;
+}
+
+.sequence-control-container {
+    width: 325px;
+    height: 25px;
+    background-color: rgba(255,255,255,0.8);
+    padding: 10px;
+    line-height: 45px;
+    text-align: center;
+    border: light gray 1px;
+}
+
+.legend-control-container {
+	font-family: olifantnormal, sans-serif;
+	text-align: center;
+	font-size:12px;
+	width: 180px;
+	height: 90px;
+	background-color: rgba(255,255,255,0.8);
+	padding: 10px;
+}
+
+#content {
+	font-family: olifantnormal, sans-serif;
+	width: 40%;
+	float: center;
+	padding-left: 50px;
+	line-height: 1.5;
+	text-align: justify;
+}
+
+#footer {
+	font-family: olifantnormal, sans-serif;
+	position: absolute;
+	bottom: 0;
+	left: 50px;
 }
