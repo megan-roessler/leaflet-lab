@@ -100,8 +100,8 @@ function createSequenceControls(map, attributes){
 		step: 1
 	});
 	//Style ff/rw buttons
-	$('#reverse').html('<img src="img/rw.png">');
-	$('#forward').html('<img src="img/ff.png">');
+	$('#reverse').html('<img src="img/rw1.png">');
+	$('#forward').html('<img src="img/ff1.png">');
 	//Update slider and map based on user interaction with buttons
 	$('.skip').click(function(){
 		var index = $('.range-slider').val();
@@ -294,11 +294,26 @@ function createOverlay(map){
 	L.marker([44.26854, -89.6165])
 		.bindPopup('<b>Tammy Baldwin (D):</b> First openly LGBT+ woman elected to Congress, first openly LGBT+ person elected to the Senate.').addTo(firstWomen);
 	
+	var osmLink = '<a href="http://openstreetmap.org">OpenStreetMap</a>',
+		bwLink = '<a href="http://thunderforest.com/">OSMBlackAndWhite</a>';
+	
+	var osmUrl = 'http://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',
+		osmAttrib = '&copy; ' + osmLink + ' Contributors',
+		bwUrl = 'https://tiles.wmflabs.org/bw-mapnik/{z}/{x}/{y}.png',
+		bwAttrib = '&copy; '+osmLink+' Contributors & '+bwLink;
+
+	var osmMap = L.tileLayer(osmUrl, {attribution: osmAttrib}),
+		bwMap = L.tileLayer(bwUrl, {attribution: bwAttrib});
+
+	var baseLayers = {
+		"OSM Mapnik": osmMap,
+		"Greyscale": bwMap
+	};
 	var overlays = {
 		"Famous Firsts": firstWomen
 	};
 	
-	L.control.layers(overlays).addTo(map);
+	L.control.layers(baseLayers,overlays).addTo(map);
 };
 
 
